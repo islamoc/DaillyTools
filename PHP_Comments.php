@@ -18,28 +18,36 @@ This is a tool to remove all Comments from all PHP files under the current dir
 and its subdirs. Support only Windows
 */
 $s = exec("dir *.php /B /S",$arr);
+
+$PHP_comments = __FILE__;
+
+if(($key = array_search($PHP_comments, $arr)) !== false) {
+    unset($arr[$key]);
+}
+
+
 foreach ($arr as $value) {
-$fileStr = file_get_contents($value);
-$newStr  = '';
+	$fileStr = file_get_contents($value);
+	$newStr  = '';
 
-$commentTokens = array(T_COMMENT);
+	$commentTokens = array(T_COMMENT);
 
-if (defined('T_DOC_COMMENT'))
-    $commentTokens[] = T_DOC_COMMENT; if (defined('T_ML_COMMENT'))
-    $commentTokens[] = T_ML_COMMENT;
-$tokens = token_get_all($fileStr);
+	if (defined('T_DOC_COMMENT'))
+		$commentTokens[] = T_DOC_COMMENT; if (defined('T_ML_COMMENT'))
+		$commentTokens[] = T_ML_COMMENT;
+	$tokens = token_get_all($fileStr);
 
-foreach ($tokens as $token) {
-    if (is_array($token)) {
-        if (in_array($token[0], $commentTokens))
-            continue;
+	foreach ($tokens as $token) {
+		if (is_array($token)) {
+			if (in_array($token[0], $commentTokens))
+				continue;
 
-        $token = $token[1];
-    }
+			$token = $token[1];
+		}
 
-    $newStr .= $token;
-}
+		$newStr .= $token;
+	}
 
-file_put_contents($value,$newStr);
-}
+	file_put_contents($value,$newStr);
+	}
 ?>
